@@ -1,4 +1,3 @@
-import SortView from '../view/sort-view.js';
 import ListView from '../view/list-view.js';
 import {render, RenderPosition} from '../render.js';
 import PointView from '../view/point-view.js';
@@ -8,7 +7,6 @@ import PointCreationView from '../view/point-creation-view.js';
 const POINT_COUNT = 3;
 
 class TripPresenter {
-  #sortView = new SortView();
   #container = null;
   #listView = new ListView();
   #pointEditView = new PointEditView();
@@ -18,7 +16,6 @@ class TripPresenter {
   }
 
   init() {
-    render(this.#sortView, this.#container);
     render(this.#listView, this.#container);
     const listElement = this.#listView.getElement();
     for (let i = 0; i < POINT_COUNT; i++) {
