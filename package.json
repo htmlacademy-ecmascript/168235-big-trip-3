@@ -26,5 +26,8 @@
   "browserslist": [
     "last 2 versions",
     "not dead"
-  ]
+  ],
+  "dependencies": {
+    "dayjs": "1.11.7"
+  }
 }
