@@ -5,6 +5,8 @@ const TIME_FORMAT = 'HH:mm';
 const MINUTES_IN_HOUR = 60;
 const HOURS_IN_DAY = 24;
 const DATE_TIME_FORMAT = 'DD/MM/YY HH:mm';
+const DURATION_PART_LENGTH = 2;
+const DURATION_PART_PAD_SYMBOL = '0';
 
 function humanizePointDate(date) {
   return date ? dayjs(date).format(DATE_FORMAT) : '';
@@ -19,10 +21,10 @@ function humanizePointDateTime(date) {
 }
 
 function formatDurationPart(value) {
-  return String(value).padStart(2, '0');
+  return String(value).padStart(DURATION_PART_LENGTH, DURATION_PART_PAD_SYMBOL);
 }
 
-function getPointDuration(dateFrom, dateTo) {
+function calcPointDuration(dateFrom, dateTo) {
   const durationInMinutes = dayjs(dateTo).diff(dateFrom, 'minute');
   const minutes = durationInMinutes % MINUTES_IN_HOUR;
   const totalHours = Math.floor(durationInMinutes / MINUTES_IN_HOUR);
@@ -37,8 +39,4 @@ function getPointDuration(dateFrom, dateTo) {
   return `${formatDurationPart(minutes)}M`;
 }
 
-function getRandomArrayElement(items) {
-  return items[Math.floor(Math.random() * items.length)];
-}
-
-export {getRandomArrayElement, humanizePointDate, humanizePointTime, getPointDuration, humanizePointDateTime};
+export {humanizePointDate, humanizePointTime, calcPointDuration, humanizePointDateTime};

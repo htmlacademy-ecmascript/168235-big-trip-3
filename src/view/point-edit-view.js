@@ -1,11 +1,11 @@
-import {createElement} from '../render.js';
+import AbstractView from './abstract-view.js';
 import { humanizePointDateTime } from '../utils.js';
-import { POINT_TYPES, BLANK_POINT, BLANK_DESTINATION } from '../const.js';
+import { PointType, BLANK_POINT, BLANK_DESTINATION } from '../const.js';
 
-function createOfferEditTemplate(offer, point) {
+function createOfferEditTemplate(offer, point, formId) {
   const isChecked = point.offers.includes(offer.id);
-  const offerInputId = `event-offer-${point.id}-${offer.id}`;
-  return `<div class="event__offer-selector">
+  const offerInputId = `event-offer-${formId}-${offer.id}`;
+  return /* HTML */ `<div class="event__offer-selector">
             <input class="event__offer-checkbox  visually-hidden" id="${offerInputId}" type="checkbox" name="event-offer" ${isChecked ? 'checked' : ''} value="${offer.id}">
             <label class="event__offer-label" for="${offerInputId}">
               <span class="event__offer-title">${offer.title}</span>
@@ -15,11 +15,11 @@ function createOfferEditTemplate(offer, point) {
           </div>`;
 }
 
-function createTypeTemplate(type, point) {
+function createTypeTemplate(type, point, formId) {
   const isChecked = point.type === type;
-  const typeInputId = `event-type-${point.id}-${type}`;
+  const typeInputId = `event-type-${formId}-${type}`;
   const typeTitle = type.charAt(0).toUpperCase() + type.slice(1);
-  return `<div class="event__type-item">
+  return /* HTML */ `<div class="event__type-item">
             <input id="${typeInputId}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${type}" ${isChecked ? 'checked' : ''}>
             <label class="event__type-label  event__type-label--${type}" for="${typeInputId}">${typeTitle}</label>
           </div>`;
@@ -31,11 +31,13 @@ function createPointEditTemplate({
   availableOffers,
   destinations
 }) {
-  const offersTemplate = availableOffers.map((offer) => createOfferEditTemplate(offer, point)).join('');
-  const typesTemplate = POINT_TYPES.map((type) => createTypeTemplate(type, point)).join('');
+  const isNewPoint = point.id === null;
+  const formId = isNewPoint ? 'new' : point.id;
+  const offersTemplate = availableOffers.map((offer) => createOfferEditTemplate(offer, point, formId)).join('');
+  const typesTemplate = Object.values(PointType).map((type) => createTypeTemplate(type, point, formId)).join('');
   const destinationsTemplate = destinations.map((city) => `<option value="${city.name}"></option>`).join('');
   const picturesTemplate = destination.pictures.map((picture) => `<img class="event__photo" src="${picture.src}" alt="${picture.description}">`).join('');
-  const offersSectionTemplate = availableOffers.length > 0 ? `
+  const offersSectionTemplate = availableOffers.length > 0 ? /* HTML */ `
   <section class="event__section  event__section--offers">
     <h3 class="event__section-title  event__section-title--offers">Offers</h3>
 
@@ -44,7 +46,7 @@ function createPointEditTemplate({
     </div>
   </section>
   ` : '';
-  const destinationSectionTemplate = destination.description.length > 0 || destination.pictures.length > 0 ? `
+  const destinationSectionTemplate = destination.description.length > 0 || destination.pictures.length > 0 ? /* HTML */ `
   <section class="event__section  event__section--destination">
     <h3 class="event__section-title  event__section-title--destination">Destination</h3>
     <p class="event__destination-description">${destination.description}</p>
@@ -54,13 +56,11 @@ function createPointEditTemplate({
       </div>
     </div>
   </section>` : '';
-  const isNewPoint = point.id === null;
-  const formId = isNewPoint ? 'new' : point.id;
   const resetButtonText = isNewPoint ? 'Cancel' : 'Delete';
-  const rollupButtonTemplate = isNewPoint ? '' : `<button class="event__rollup-btn" type="button">
+  const rollupButtonTemplate = isNewPoint ? '' : /* HTML */ `<button class="event__rollup-btn" type="button">
                     <span class="visually-hidden">Open event</span>
                   </button>`;
-  return `<li class="trip-events__item">
+  return /* HTML */ `<li class="trip-events__item">
               <form class="event event--edit" action="#" method="post">
                 <header class="event__header">
                   <div class="event__type-wrapper">
@@ -116,34 +116,27 @@ function createPointEditTemplate({
             </li>`;
 }
 
-class PointEditView {
-  #element = null;
+class PointEditView extends AbstractView {
   #point = null;
   #destination = null;
   #destinations = [];
   #availableOffers = [];
+
   constructor({point = BLANK_POINT, destination = BLANK_DESTINATION, availableOffers = [], destinations = []}) {
+    super();
     this.#point = point;
     this.#destination = destination;
     this.#availableOffers = availableOffers;
     this.#destinations = destinations;
   }
 
-  getTemplate() {
+  get template() {
     return createPointEditTemplate({
       point: this.#point,
       destination: this.#destination,
       availableOffers: this.#availableOffers,
       destinations: this.#destinations
     });
-  }
-
-  getElement() {
-    if(this.#element === null) {
-      const template = this.getTemplate();
-      this.#element = createElement(template);
-    }
-    return this.#element;
   }
 }
 

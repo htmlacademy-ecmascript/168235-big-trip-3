@@ -1,19 +1,19 @@
-import { createElement } from '../render.js';
-import { humanizePointDate, humanizePointTime, getPointDuration } from '../utils.js';
+import AbstractView from './abstract-view.js';
+import { humanizePointDate, humanizePointTime, calcPointDuration } from '../utils.js';
 
 function createOfferTemplate(offer) {
-  return `<li class="event__offer">
+  return /* HTML */ `<li class="event__offer">
             <span class="event__offer-title">${offer.title}</span>
               &plus;&euro;&nbsp;
             <span class="event__offer-price">${offer.price}</span>
           </li>`;
 }
 
-function createPointTemplate(point, destination, selectedOffers) {
+function createPointTemplate({point, destination, selectedOffers}) {
   const {basePrice, dateFrom, dateTo, type, isFavorite} = point;
   const favoriteButtonClass = isFavorite ? 'event__favorite-btn event__favorite-btn--active' : 'event__favorite-btn';
   const offersTemplate = selectedOffers.map(createOfferTemplate).join('');
-  return `<li class="trip-events__item">
+  return /* HTML */ `<li class="trip-events__item">
               <div class="event">
                 <time class="event__date" datetime="${dateFrom}">${humanizePointDate(dateFrom)}</time>
                 <div class="event__type">
@@ -26,7 +26,7 @@ function createPointTemplate(point, destination, selectedOffers) {
                     &mdash;
                     <time class="event__end-time" datetime="${dateTo}">${humanizePointTime(dateTo)}</time>
                   </p>
-                  <p class="event__duration">${getPointDuration(dateFrom, dateTo)}</p>
+                  <p class="event__duration">${calcPointDuration(dateFrom, dateTo)}</p>
                 </div>
                 <p class="event__price">
                   &euro;&nbsp;<span class="event__price-value">${basePrice}</span>
@@ -48,27 +48,24 @@ function createPointTemplate(point, destination, selectedOffers) {
             </li>`;
 }
 
-class PointView {
-  #element = null;
+class PointView extends AbstractView {
   #point = null;
   #destination = null;
   #selectedOffers = [];
+
   constructor({point, destination, selectedOffers}) {
+    super();
     this.#point = point;
     this.#destination = destination;
     this.#selectedOffers = selectedOffers;
   }
 
-  getTemplate() {
-    return createPointTemplate(this.#point, this.#destination, this.#selectedOffers);
-  }
-
-  getElement() {
-    if (this.#element === null) {
-      const template = this.getTemplate();
-      this.#element = createElement(template);
-    }
-    return this.#element;
+  get template() {
+    return createPointTemplate({
+      point: this.#point,
+      destination: this.#destination,
+      selectedOffers: this.#selectedOffers
+    });
   }
 }
 
