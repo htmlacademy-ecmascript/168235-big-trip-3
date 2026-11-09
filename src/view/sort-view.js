@@ -1,7 +1,7 @@
-import {createElement} from '../render.js';
+import AbstractView from './abstract-view.js';
 
 function createSortTemplate() {
-  return `<form class="trip-events__trip-sort  trip-sort" action="#" method="get">
+  return /* HTML */ `<form class="trip-events__trip-sort  trip-sort" action="#" method="get">
             <div class="trip-sort__item  trip-sort__item--day">
               <input id="sort-day" class="trip-sort__input  visually-hidden" type="radio" name="trip-sort" value="sort-day" checked>
               <label class="trip-sort__btn" for="sort-day">Day</label>
@@ -29,18 +29,9 @@ function createSortTemplate() {
           </form>`;
 }
 
-class SortView {
-  #element = null;
-  getTemplate() {
+class SortView extends AbstractView {
+  get template() {
     return createSortTemplate();
-  }
-
-  getElement() {
-    if (this.#element === null) {
-      const template = this.getTemplate();
-      this.#element = createElement(template);
-    }
-    return this.#element;
   }
 }
 
