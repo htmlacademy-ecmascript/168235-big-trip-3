@@ -27,16 +27,43 @@ class TripPresenter {
     const availableOffers = this.#pointsModel.getOffersByType(point.type);
     const selectedOffers = availableOffers.filter((offer) => point.offers.includes(offer.id));
 
+    const escKeyDownHandler = (evt) => {
+      if (evt.key === 'Escape') {
+        evt.preventDefault();
+        closeForm();
+      }
+    };
+
     const pointView = new PointView({
       point,
       destination,
       selectedOffers,
-      onEditClick: replacePointToForm
+      onEditClick: () => {
+        replacePointToForm();
+        document.addEventListener('keydown', escKeyDownHandler);
+      }
     });
-    const pointEditView = new PointEditView({point, destination, destinations, availableOffers});
+
+    const pointEditView = new PointEditView({
+      point,
+      destination,
+      destinations,
+      availableOffers,
+      onFormSubmit: closeForm,
+      onRollupClick: closeForm
+    });
 
     function replacePointToForm() {
       replace(pointEditView, pointView);
+    }
+
+    function replaceFormToPoint() {
+      replace(pointView, pointEditView);
+    }
+
+    function closeForm() {
+      replaceFormToPoint();
+      document.removeEventListener('keydown', escKeyDownHandler);
     }
 
     render(pointView, this.#listView.element);
