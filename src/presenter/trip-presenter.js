@@ -1,5 +1,5 @@
 import ListView from '../view/list-view.js';
-import {render, RenderPosition} from '../render.js';
+import {render, RenderPosition} from '../framework/render.js';
 import PointView from '../view/point-view.js';
 import PointEditView from '../view/point-edit-view.js';
 import { BLANK_POINT } from '../const.js';

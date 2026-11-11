@@ -1,4 +1,4 @@
-import AbstractView from './abstract-view.js';
+import AbstractView from '../framework/view/abstract-view.js';
 
 function createSortTemplate() {
   return /* HTML */ `<form class="trip-events__trip-sort  trip-sort" action="#" method="get">

@@ -1,4 +1,4 @@
-import AbstractView from './abstract-view.js';
+import AbstractView from '../framework/view/abstract-view.js';
 import { humanizePointDateTime } from '../utils.js';
 import { PointType, BLANK_POINT, BLANK_DESTINATION } from '../const.js';
 
