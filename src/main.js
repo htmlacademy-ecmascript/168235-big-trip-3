@@ -1,6 +1,6 @@
 import FiltersView from './view/filters-view.js';
 import SortView from './view/sort-view.js';
-import {render} from './render.js';
+import {render} from './framework/render.js';
 import TripPresenter from './presenter/trip-presenter.js';
 import PointsModel from './model/points-model.js';
 
