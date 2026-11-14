@@ -10,6 +10,13 @@ const PointType = {
   RESTAURANT: 'restaurant'
 };
 
+const FilterType = {
+  EVERYTHING: 'everything',
+  FUTURE: 'future',
+  PRESENT: 'present',
+  PAST: 'past'
+};
+
 const BLANK_POINT = {
   dateFrom: null,
   dateTo: null,
@@ -28,4 +35,4 @@ const BLANK_DESTINATION = {
   pictures: []
 };
 
-export {PointType, BLANK_POINT, BLANK_DESTINATION};
+export {PointType, FilterType, BLANK_POINT, BLANK_DESTINATION};
