@@ -9,6 +9,10 @@ const DATE_TIME_FORMAT = 'DD/MM/YY HH:mm';
 const DURATION_PART_LENGTH = 2;
 const DURATION_PART_PAD_SYMBOL = '0';
 
+function capitalize(text) {
+  return text.charAt(0).toUpperCase() + text.slice(1);
+}
+
 function humanizePointDate(date) {
   return date ? dayjs(date).format(DATE_FORMAT) : '';
 }
@@ -59,4 +63,4 @@ const filter = {
   [FilterType.PAST]: (points) => points.filter(isPointPast),
 };
 
-export {humanizePointDate, humanizePointTime, calcPointDuration, humanizePointDateTime, filter};
+export {capitalize, humanizePointDate, humanizePointTime, calcPointDuration, humanizePointDateTime, filter};
