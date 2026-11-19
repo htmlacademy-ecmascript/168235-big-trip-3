@@ -2,11 +2,14 @@ import ListView from '../view/list-view.js';
 import {render, replace} from '../framework/render.js';
 import PointView from '../view/point-view.js';
 import PointEditView from '../view/point-edit-view.js';
+import ListEmptyView from '../view/list-empty-view.js';
+import SortView from '../view/sort-view.js';
 
 class TripPresenter {
   #container = null;
   #pointsModel = null;
   #listView = new ListView();
+  #sortView = new SortView();
 
   constructor(container, pointsModel) {
     this.#container = container;
@@ -14,6 +17,12 @@ class TripPresenter {
   }
 
   init() {
+    if (this.#pointsModel.points.length === 0) {
+      render(new ListEmptyView(), this.#container);
+      return;
+    }
+
+    render(this.#sortView, this.#container);
     render(this.#listView, this.#container);
 
     this.#pointsModel.points.forEach((point) => {

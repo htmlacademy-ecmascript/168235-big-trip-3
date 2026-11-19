@@ -1,5 +1,5 @@
 import AbstractView from '../framework/view/abstract-view.js';
-import { humanizePointDateTime } from '../utils.js';
+import {humanizePointDateTime, capitalize} from '../utils.js';
 import { PointType, BLANK_POINT, BLANK_DESTINATION } from '../const.js';
 
 function createOfferEditTemplate(offer, point, formId) {
@@ -18,10 +18,9 @@ function createOfferEditTemplate(offer, point, formId) {
 function createTypeTemplate(type, point, formId) {
   const isChecked = point.type === type;
   const typeInputId = `event-type-${formId}-${type}`;
-  const typeTitle = type.charAt(0).toUpperCase() + type.slice(1);
   return /* HTML */ `<div class="event__type-item">
             <input id="${typeInputId}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${type}" ${isChecked ? 'checked' : ''}>
-            <label class="event__type-label  event__type-label--${type}" for="${typeInputId}">${typeTitle}</label>
+            <label class="event__type-label  event__type-label--${type}" for="${typeInputId}">${capitalize(type)}</label>
           </div>`;
 }
 

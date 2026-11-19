@@ -1,4 +1,5 @@
 import dayjs from 'dayjs';
+import {FilterType} from './const.js';
 
 const DATE_FORMAT = 'MMM DD';
 const TIME_FORMAT = 'HH:mm';
@@ -7,6 +8,10 @@ const HOURS_IN_DAY = 24;
 const DATE_TIME_FORMAT = 'DD/MM/YY HH:mm';
 const DURATION_PART_LENGTH = 2;
 const DURATION_PART_PAD_SYMBOL = '0';
+
+function capitalize(text) {
+  return text.charAt(0).toUpperCase() + text.slice(1);
+}
 
 function humanizePointDate(date) {
   return date ? dayjs(date).format(DATE_FORMAT) : '';
@@ -39,4 +44,23 @@ function calcPointDuration(dateFrom, dateTo) {
   return `${formatDurationPart(minutes)}M`;
 }
 
-export {humanizePointDate, humanizePointTime, calcPointDuration, humanizePointDateTime};
+function isPointFuture(point) {
+  return dayjs(point.dateFrom).isAfter(dayjs());
+}
+
+function isPointPast(point) {
+  return dayjs(point.dateTo).isBefore(dayjs());
+}
+
+function isPointPresent(point) {
+  return !dayjs(point.dateFrom).isAfter(dayjs()) && !dayjs(point.dateTo).isBefore(dayjs());
+}
+
+const filter = {
+  [FilterType.EVERYTHING]: (points) => points,
+  [FilterType.FUTURE]: (points) => points.filter(isPointFuture),
+  [FilterType.PRESENT]: (points) => points.filter(isPointPresent),
+  [FilterType.PAST]: (points) => points.filter(isPointPast),
+};
+
+export {capitalize, humanizePointDate, humanizePointTime, calcPointDuration, humanizePointDateTime, filter};
