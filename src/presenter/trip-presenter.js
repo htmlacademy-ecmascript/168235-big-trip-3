@@ -9,6 +9,7 @@ class TripPresenter {
   #pointsModel = null;
   #listView = new ListView();
   #sortView = new SortView();
+  #pointPresenters = new Map();
 
   constructor(container, pointsModel) {
     this.#container = container;
@@ -36,6 +37,7 @@ class TripPresenter {
     });
 
     pointPresenter.init(point);
+    this.#pointPresenters.set(point.id, pointPresenter);
   }
 }
 
