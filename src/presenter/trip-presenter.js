@@ -3,10 +3,12 @@ import {render} from '../framework/render.js';
 import ListEmptyView from '../view/list-empty-view.js';
 import SortView from '../view/sort-view.js';
 import PointPresenter from './point-presenter.js';
+import {updateItem} from '../utils.js';
 
 class TripPresenter {
   #container = null;
   #pointsModel = null;
+  #points = [];
   #listView = new ListView();
   #sortView = new SortView();
   #pointPresenters = new Map();
@@ -17,7 +19,9 @@ class TripPresenter {
   }
 
   init() {
-    if (this.#pointsModel.points.length === 0) {
+    this.#points = [...this.#pointsModel.points];
+
+    if (this.#points.length === 0) {
       render(new ListEmptyView(), this.#container);
       return;
     }
@@ -25,7 +29,7 @@ class TripPresenter {
     render(this.#sortView, this.#container);
     render(this.#listView, this.#container);
 
-    this.#pointsModel.points.forEach((point) => {
+    this.#points.forEach((point) => {
       this.#renderPoint(point);
     });
   }
@@ -33,12 +37,18 @@ class TripPresenter {
   #renderPoint(point) {
     const pointPresenter = new PointPresenter({
       pointListContainer: this.#listView.element,
-      pointsModel: this.#pointsModel
+      pointsModel: this.#pointsModel,
+      onDataChange: this.#handlePointChange
     });
 
     pointPresenter.init(point);
     this.#pointPresenters.set(point.id, pointPresenter);
   }
+
+  #handlePointChange = (updatedPoint) => {
+    this.#points = updateItem(this.#points, updatedPoint);
+    this.#pointPresenters.get(updatedPoint.id).init(updatedPoint);
+  };
 }
 
 export default TripPresenter;
