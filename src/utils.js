@@ -56,6 +56,10 @@ function isPointPresent(point) {
   return !dayjs(point.dateFrom).isAfter(dayjs()) && !dayjs(point.dateTo).isBefore(dayjs());
 }
 
+function updateItem(items, update) {
+  return items.map((item) => item.id === update.id ? update : item);
+}
+
 const filter = {
   [FilterType.EVERYTHING]: (points) => points,
   [FilterType.FUTURE]: (points) => points.filter(isPointFuture),
@@ -63,4 +67,4 @@ const filter = {
   [FilterType.PAST]: (points) => points.filter(isPointPast),
 };
 
-export {capitalize, humanizePointDate, humanizePointTime, calcPointDuration, humanizePointDateTime, filter};
+export {capitalize, humanizePointDate, humanizePointTime, calcPointDuration, humanizePointDateTime, filter, updateItem};
