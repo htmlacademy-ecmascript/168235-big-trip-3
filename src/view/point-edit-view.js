@@ -1,6 +1,6 @@
 import AbstractView from '../framework/view/abstract-view.js';
 import {humanizePointDateTime, capitalize} from '../utils.js';
-import { PointType, BLANK_POINT, BLANK_DESTINATION } from '../const.js';
+import {PointType, BLANK_POINT, BLANK_DESTINATION, ROLLUP_BUTTON_CLASS} from '../const.js';
 
 function createOfferEditTemplate(offer, point, formId) {
   const isChecked = point.offers.includes(offer.id);
@@ -56,7 +56,7 @@ function createPointEditTemplate({
     </div>
   </section>` : '';
   const resetButtonText = isNewPoint ? 'Cancel' : 'Delete';
-  const rollupButtonTemplate = isNewPoint ? '' : /* HTML */ `<button class="event__rollup-btn" type="button">
+  const rollupButtonTemplate = isNewPoint ? '' : /* HTML */ `<button class="${ROLLUP_BUTTON_CLASS}" type="button">
                     <span class="visually-hidden">Open event</span>
                   </button>`;
   return /* HTML */ `<li class="trip-events__item">
@@ -141,7 +141,7 @@ class PointEditView extends AbstractView {
 
     this.element.querySelector('form')
       .addEventListener('submit', this.#formSubmitHandler);
-    this.element.querySelector('.event__rollup-btn')
+    this.element.querySelector(`.${ROLLUP_BUTTON_CLASS}`)
       .addEventListener('click', this.#rollupClickHandler);
   }
 
@@ -154,13 +154,13 @@ class PointEditView extends AbstractView {
     });
   }
 
-  #formSubmitHandler = (evt) => {
-    evt.preventDefault();
+  #formSubmitHandler = (event) => {
+    event.preventDefault();
     this.#handleFormSubmit();
   };
 
-  #rollupClickHandler = (evt) => {
-    evt.preventDefault();
+  #rollupClickHandler = (event) => {
+    event.preventDefault();
     this.#handleRollupClick();
   };
 }

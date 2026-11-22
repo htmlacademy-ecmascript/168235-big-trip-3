@@ -32,7 +32,7 @@ class PointPresenter {
     const prevPointView = this.#pointView;
     const prevPointEditView = this.#pointEditView;
 
-    const destinations = this.#pointsModel.destinations;
+    const {destinations} = this.#pointsModel;
     const destination = this.#pointsModel.getDestinationById(point.destination);
     const availableOffers = this.#pointsModel.getOffersByType(point.type);
     const selectedOffers = availableOffers.filter((offer) => point.offers.includes(offer.id));
@@ -95,9 +95,9 @@ class PointPresenter {
     this.#mode = Mode.DEFAULT;
   }
 
-  #escKeyDownHandler = (evt) => {
-    if (evt.key === 'Escape') {
-      evt.preventDefault();
+  #escKeyDownHandler = (event) => {
+    if (event.key === 'Escape') {
+      event.preventDefault();
       this.#replaceFormToPoint();
     }
   };

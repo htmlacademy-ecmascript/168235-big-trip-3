@@ -35,4 +35,7 @@ const BLANK_DESTINATION = {
   pictures: []
 };
 
-export {PointType, FilterType, BLANK_POINT, BLANK_DESTINATION};
+const ROLLUP_BUTTON_CLASS = 'event__rollup-btn';
+const FAVORITE_BUTTON_CLASS = 'event__favorite-btn';
+
+export {PointType, FilterType, BLANK_POINT, BLANK_DESTINATION, ROLLUP_BUTTON_CLASS, FAVORITE_BUTTON_CLASS};
