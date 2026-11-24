@@ -17,6 +17,14 @@ const FilterType = {
   PAST: 'past'
 };
 
+const SortType = {
+  DAY: 'day',
+  EVENT: 'event',
+  TIME: 'time',
+  PRICE: 'price',
+  OFFER: 'offer'
+};
+
 const BLANK_POINT = {
   dateFrom: null,
   dateTo: null,
@@ -38,4 +46,4 @@ const BLANK_DESTINATION = {
 const ROLLUP_BUTTON_CLASS = 'event__rollup-btn';
 const FAVORITE_BUTTON_CLASS = 'event__favorite-btn';
 
-export {PointType, FilterType, BLANK_POINT, BLANK_DESTINATION, ROLLUP_BUTTON_CLASS, FAVORITE_BUTTON_CLASS};
+export {PointType, FilterType, SortType, BLANK_POINT, BLANK_DESTINATION, ROLLUP_BUTTON_CLASS, FAVORITE_BUTTON_CLASS};
