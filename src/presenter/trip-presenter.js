@@ -3,7 +3,8 @@ import {render} from '../framework/render.js';
 import ListEmptyView from '../view/list-empty-view.js';
 import SortView from '../view/sort-view.js';
 import PointPresenter from './point-presenter.js';
-import {updateItem} from '../utils.js';
+import {updateItem, sorting} from '../utils.js';
+import {SortType} from '../const.js';
 
 class TripPresenter {
   #container = null;
@@ -11,6 +12,7 @@ class TripPresenter {
   #points = [];
   #listView = new ListView();
   #sortView = null;
+  #currentSortType = SortType.DAY;
   #pointPresenters = new Map();
 
   constructor(container, pointsModel) {
@@ -26,6 +28,7 @@ class TripPresenter {
       return;
     }
 
+    this.#sortPoints(this.#currentSortType);
     this.#renderSort();
     render(this.#listView, this.#container);
 
@@ -34,6 +37,11 @@ class TripPresenter {
 
   #renderEmptyList() {
     render(new ListEmptyView(), this.#container);
+  }
+
+  #sortPoints(sortType) {
+    this.#currentSortType = sortType;
+    this.#points = sorting[sortType](this.#points);
   }
 
   #renderSort() {
@@ -59,6 +67,11 @@ class TripPresenter {
     this.#pointPresenters.set(point.id, pointPresenter);
   }
 
+  #clearPointList() {
+    this.#pointPresenters.forEach((presenter) => presenter.destroy());
+    this.#pointPresenters.clear();
+  }
+
   #handlePointChange = (updatedPoint) => {
     this.#points = updateItem(this.#points, updatedPoint);
     this.#pointPresenters.get(updatedPoint.id).init(updatedPoint);
@@ -68,7 +81,15 @@ class TripPresenter {
     this.#pointPresenters.forEach((presenter) => presenter.resetView());
   };
 
-  #handleSortTypeChange = () => {};
+  #handleSortTypeChange = (sortType) => {
+    if (this.#currentSortType === sortType) {
+      return;
+    }
+
+    this.#sortPoints(sortType);
+    this.#clearPointList();
+    this.#renderPoints();
+  };
 }
 
 export default TripPresenter;

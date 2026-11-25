@@ -74,6 +74,7 @@ class PointPresenter {
   destroy() {
     remove(this.#pointView);
     remove(this.#pointEditView);
+    document.removeEventListener('keydown', this.#escKeyDownHandler);
   }
 
   resetView() {
