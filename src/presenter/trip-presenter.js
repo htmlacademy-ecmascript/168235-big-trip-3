@@ -10,7 +10,7 @@ class TripPresenter {
   #pointsModel = null;
   #points = [];
   #listView = new ListView();
-  #sortView = new SortView();
+  #sortView = null;
   #pointPresenters = new Map();
 
   constructor(container, pointsModel) {
@@ -22,13 +22,26 @@ class TripPresenter {
     this.#points = [...this.#pointsModel.points];
 
     if (this.#points.length === 0) {
-      render(new ListEmptyView(), this.#container);
+      this.#renderEmptyList();
       return;
     }
 
-    render(this.#sortView, this.#container);
+    this.#renderSort();
     render(this.#listView, this.#container);
 
+    this.#renderPoints();
+  }
+
+  #renderEmptyList() {
+    render(new ListEmptyView(), this.#container);
+  }
+
+  #renderSort() {
+    this.#sortView = new SortView({onSortTypeChange: this.#handleSortTypeChange});
+    render(this.#sortView, this.#container);
+  }
+
+  #renderPoints() {
     this.#points.forEach((point) => {
       this.#renderPoint(point);
     });
@@ -54,6 +67,8 @@ class TripPresenter {
   #handleModeChange = () => {
     this.#pointPresenters.forEach((presenter) => presenter.resetView());
   };
+
+  #handleSortTypeChange = () => {};
 }
 
 export default TripPresenter;

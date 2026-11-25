@@ -56,6 +56,22 @@ function isPointPresent(point) {
   return !dayjs(point.dateFrom).isAfter(dayjs()) && !dayjs(point.dateTo).isBefore(dayjs());
 }
 
+function sortPointsByPrice(pointA, pointB) {
+  return pointB.basePrice - pointA.basePrice;
+}
+
+function getPointDuration(point) {
+  return dayjs(point.dateTo).diff(point.dateFrom);
+}
+
+function sortPointsByTime(pointA, pointB) {
+  return getPointDuration(pointB) - getPointDuration(pointA);
+}
+
+function sortPointsByDay(pointA, pointB) {
+  return dayjs(pointA.dateFrom).diff(pointB.dateFrom);
+}
+
 function updateItem(items, update) {
   return items.map((item) => item.id === update.id ? update : item);
 }
@@ -67,4 +83,4 @@ const filter = {
   [FilterType.PAST]: (points) => points.filter(isPointPast),
 };
 
-export {capitalize, humanizePointDate, humanizePointTime, calcPointDuration, humanizePointDateTime, filter, updateItem};
+export {capitalize, humanizePointDate, humanizePointTime, calcPointDuration, humanizePointDateTime, filter, sortPointsByPrice, sortPointsByTime, sortPointsByDay, updateItem};
