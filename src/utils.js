@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import {FilterType} from './const.js';
+import {FilterType, SortType} from './const.js';
 
 const DATE_FORMAT = 'MMM DD';
 const TIME_FORMAT = 'HH:mm';
@@ -56,6 +56,22 @@ function isPointPresent(point) {
   return !dayjs(point.dateFrom).isAfter(dayjs()) && !dayjs(point.dateTo).isBefore(dayjs());
 }
 
+function sortPointsByDay(pointA, pointB) {
+  return dayjs(pointA.dateFrom).diff(pointB.dateFrom);
+}
+
+function getPointDuration(point) {
+  return dayjs(point.dateTo).diff(point.dateFrom);
+}
+
+function sortPointsByTime(pointA, pointB) {
+  return getPointDuration(pointB) - getPointDuration(pointA);
+}
+
+function sortPointsByPrice(pointA, pointB) {
+  return pointB.basePrice - pointA.basePrice;
+}
+
 function updateItem(items, update) {
   return items.map((item) => item.id === update.id ? update : item);
 }
@@ -67,4 +83,10 @@ const filter = {
   [FilterType.PAST]: (points) => points.filter(isPointPast),
 };
 
-export {capitalize, humanizePointDate, humanizePointTime, calcPointDuration, humanizePointDateTime, filter, updateItem};
+const sorting = {
+  [SortType.DAY]: (points) => [...points].sort(sortPointsByDay),
+  [SortType.TIME]: (points) => [...points].sort(sortPointsByTime),
+  [SortType.PRICE]: (points) => [...points].sort(sortPointsByPrice),
+};
+
+export {capitalize, humanizePointDate, humanizePointTime, calcPointDuration, humanizePointDateTime, filter, sorting, updateItem};
