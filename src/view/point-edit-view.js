@@ -1,4 +1,4 @@
-import AbstractView from '../framework/view/abstract-view.js';
+import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import {humanizePointDateTime, capitalize} from '../utils.js';
 import {PointType, BLANK_POINT, BLANK_DESTINATION, ROLLUP_BUTTON_CLASS} from '../const.js';
 
@@ -116,8 +116,7 @@ function createPointEditTemplate({
             </li>`;
 }
 
-class PointEditView extends AbstractView {
-  #point = null;
+class PointEditView extends AbstractStatefulView {
   #destinations = [];
   #offers = [];
   #handleFormSubmit = null;
@@ -131,24 +130,27 @@ class PointEditView extends AbstractView {
     onRollupClick
   }) {
     super();
-    this.#point = point;
+    this._setState(PointEditView.parsePointToState(point));
     this.#destinations = destinations;
     this.#offers = offers;
     this.#handleFormSubmit = onFormSubmit;
     this.#handleRollupClick = onRollupClick;
-
-    this.element.querySelector('form')
-      .addEventListener('submit', this.#formSubmitHandler);
-    this.element.querySelector(`.${ROLLUP_BUTTON_CLASS}`)
-      .addEventListener('click', this.#rollupClickHandler);
+    this._restoreHandlers();
   }
 
   get template() {
     return createPointEditTemplate({
-      point: this.#point,
+      point: this._state,
       destinations: this.#destinations,
       offers: this.#offers
     });
+  }
+
+  _restoreHandlers() {
+    this.element.querySelector('form')
+      .addEventListener('submit', this.#formSubmitHandler);
+    this.element.querySelector(`.${ROLLUP_BUTTON_CLASS}`)
+      .addEventListener('click', this.#rollupClickHandler);
   }
 
   #formSubmitHandler = (event) => {
@@ -160,6 +162,10 @@ class PointEditView extends AbstractView {
     event.preventDefault();
     this.#handleRollupClick();
   };
+
+  static parsePointToState(point) {
+    return {...point};
+  }
 }
 
 export default PointEditView;
