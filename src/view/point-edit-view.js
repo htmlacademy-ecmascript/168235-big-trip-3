@@ -26,10 +26,11 @@ function createTypeTemplate(type, point, formId) {
 
 function createPointEditTemplate({
   point,
-  destination,
-  availableOffers,
-  destinations
+  destinations,
+  offers
 }) {
+  const destination = destinations.find((item) => item.id === point.destination) ?? BLANK_DESTINATION;
+  const availableOffers = offers.find((item) => item.type === point.type)?.offers ?? [];
   const isNewPoint = point.id === null;
   const formId = isNewPoint ? 'new' : point.id;
   const offersTemplate = availableOffers.map((offer) => createOfferEditTemplate(offer, point, formId)).join('');
@@ -117,25 +118,22 @@ function createPointEditTemplate({
 
 class PointEditView extends AbstractView {
   #point = null;
-  #destination = null;
   #destinations = [];
-  #availableOffers = [];
+  #offers = [];
   #handleFormSubmit = null;
   #handleRollupClick = null;
 
   constructor({
     point = BLANK_POINT,
-    destination = BLANK_DESTINATION,
-    availableOffers = [],
     destinations = [],
+    offers = [],
     onFormSubmit,
     onRollupClick
   }) {
     super();
     this.#point = point;
-    this.#destination = destination;
-    this.#availableOffers = availableOffers;
     this.#destinations = destinations;
+    this.#offers = offers;
     this.#handleFormSubmit = onFormSubmit;
     this.#handleRollupClick = onRollupClick;
 
@@ -148,9 +146,8 @@ class PointEditView extends AbstractView {
   get template() {
     return createPointEditTemplate({
       point: this.#point,
-      destination: this.#destination,
-      availableOffers: this.#availableOffers,
-      destinations: this.#destinations
+      destinations: this.#destinations,
+      offers: this.#offers
     });
   }
 
