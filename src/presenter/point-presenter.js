@@ -49,8 +49,8 @@ class PointPresenter {
       point,
       destinations,
       offers,
-      onFormSubmit: this.#handleFormClose,
-      onRollupClick: this.#handleFormClose
+      onFormSubmit: this.#handleFormSubmit,
+      onRollupClick: this.#handleRollupClick
     });
 
     if (prevPointView === null || prevPointEditView === null) {
@@ -78,6 +78,7 @@ class PointPresenter {
 
   resetView() {
     if (this.#mode !== Mode.DEFAULT) {
+      this.#pointEditView.reset(this.#point);
       this.#replaceFormToPoint();
     }
   }
@@ -98,6 +99,7 @@ class PointPresenter {
   #escKeyDownHandler = (event) => {
     if (event.key === 'Escape') {
       event.preventDefault();
+      this.#pointEditView.reset(this.#point);
       this.#replaceFormToPoint();
     }
   };
@@ -106,7 +108,12 @@ class PointPresenter {
     this.#replacePointToForm();
   };
 
-  #handleFormClose = () => {
+  #handleFormSubmit = () => {
+    this.#replaceFormToPoint();
+  };
+
+  #handleRollupClick = () => {
+    this.#pointEditView.reset(this.#point);
     this.#replaceFormToPoint();
   };
 

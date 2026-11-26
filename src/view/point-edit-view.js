@@ -146,6 +146,12 @@ class PointEditView extends AbstractStatefulView {
     });
   }
 
+  reset(point) {
+    this.updateElement(
+      PointEditView.parsePointToState(point)
+    );
+  }
+
   _restoreHandlers() {
     this.element.querySelector('.event__type-group')
       .addEventListener('change', this.#typeChangeHandler);
