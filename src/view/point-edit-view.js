@@ -149,6 +149,8 @@ class PointEditView extends AbstractStatefulView {
   _restoreHandlers() {
     this.element.querySelector('.event__type-group')
       .addEventListener('change', this.#typeChangeHandler);
+    this.element.querySelector('.event__input--destination')
+      .addEventListener('change', this.#destinationChangeHandler);
     this.element.querySelector('form')
       .addEventListener('submit', this.#formSubmitHandler);
     this.element.querySelector(`.${ROLLUP_BUTTON_CLASS}`)
@@ -159,6 +161,18 @@ class PointEditView extends AbstractStatefulView {
     this.updateElement({
       type: event.target.value,
       offers: []
+    });
+  };
+
+  #destinationChangeHandler = (event) => {
+    const selectedDestination = this.#destinations.find((item) => item.name === event.target.value);
+
+    if (!selectedDestination) {
+      return;
+    }
+
+    this.updateElement({
+      destination: selectedDestination.id
     });
   };
 
