@@ -1,6 +1,14 @@
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import {humanizePointDateTime, capitalize} from '../utils.js';
 import {PointType, BLANK_POINT, BLANK_DESTINATION, ROLLUP_BUTTON_CLASS} from '../const.js';
+import flatpickr from 'flatpickr';
+import 'flatpickr/dist/flatpickr.min.css';
+
+const DATEPICKER_OPTIONS = {
+  dateFormat: 'd/m/y H:i',
+  enableTime: true,
+  'time_24hr': true,
+};
 
 function createOfferEditTemplate(offer, point, formId) {
   const isChecked = point.offers.includes(offer.id);
@@ -121,6 +129,8 @@ class PointEditView extends AbstractStatefulView {
   #offers = [];
   #handleFormSubmit = null;
   #handleRollupClick = null;
+  #datepickerFrom = null;
+  #datepickerTo = null;
 
   constructor({
     point = BLANK_POINT,
@@ -152,15 +162,52 @@ class PointEditView extends AbstractStatefulView {
     );
   }
 
+  removeElement() {
+    super.removeElement();
+
+    if (this.#datepickerFrom) {
+      this.#datepickerFrom.destroy();
+      this.#datepickerFrom = null;
+    }
+    if (this.#datepickerTo) {
+      this.#datepickerTo.destroy();
+      this.#datepickerTo = null;
+    }
+  }
+
   _restoreHandlers() {
+    this.#setDatepickers();
     this.element.querySelector('.event__type-group')
       .addEventListener('change', this.#typeChangeHandler);
     this.element.querySelector('.event__input--destination')
       .addEventListener('change', this.#destinationChangeHandler);
     this.element.querySelector('form')
       .addEventListener('submit', this.#formSubmitHandler);
-    this.element.querySelector(`.${ROLLUP_BUTTON_CLASS}`)
-      .addEventListener('click', this.#rollupClickHandler);
+
+    const rollupButton = this.element.querySelector(`.${ROLLUP_BUTTON_CLASS}`);
+    if (rollupButton) {
+      rollupButton.addEventListener('click', this.#rollupClickHandler);
+    }
+  }
+
+  #setDatepickers() {
+    this.#datepickerFrom = flatpickr(
+      this.element.querySelector('[name="event-start-time"]'),
+      {
+        ...DATEPICKER_OPTIONS,
+        defaultDate: this._state.dateFrom,
+        onChange: this.#dateFromChangeHandler,
+      }
+    );
+    this.#datepickerTo = flatpickr(
+      this.element.querySelector('[name="event-end-time"]'),
+      {
+        ...DATEPICKER_OPTIONS,
+        defaultDate: this._state.dateTo,
+        minDate: this._state.dateFrom,
+        onChange: this.#dateToChangeHandler,
+      }
+    );
   }
 
   #typeChangeHandler = (event) => {
@@ -190,6 +237,19 @@ class PointEditView extends AbstractStatefulView {
   #rollupClickHandler = (event) => {
     event.preventDefault();
     this.#handleRollupClick();
+  };
+
+  #dateFromChangeHandler = ([userDate]) => {
+    this._setState({
+      dateFrom: userDate,
+    });
+    this.#datepickerTo.set('minDate', userDate);
+  };
+
+  #dateToChangeHandler = ([userDate]) => {
+    this._setState({
+      dateTo: userDate,
+    });
   };
 
   static parsePointToState(point) {
