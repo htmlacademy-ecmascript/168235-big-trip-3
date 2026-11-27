@@ -183,8 +183,11 @@ class PointEditView extends AbstractStatefulView {
       .addEventListener('change', this.#destinationChangeHandler);
     this.element.querySelector('form')
       .addEventListener('submit', this.#formSubmitHandler);
-    this.element.querySelector(`.${ROLLUP_BUTTON_CLASS}`)
-      .addEventListener('click', this.#rollupClickHandler);
+
+    const rollupButton = this.element.querySelector(`.${ROLLUP_BUTTON_CLASS}`);
+    if (rollupButton) {
+      rollupButton.addEventListener('click', this.#rollupClickHandler);
+    }
   }
 
   #setDatepickers() {
@@ -193,6 +196,7 @@ class PointEditView extends AbstractStatefulView {
       {
         ...DATEPICKER_OPTIONS,
         defaultDate: this._state.dateFrom,
+        onChange: this.#dateFromChangeHandler,
       }
     );
     this.#datepickerTo = flatpickr(
@@ -200,6 +204,8 @@ class PointEditView extends AbstractStatefulView {
       {
         ...DATEPICKER_OPTIONS,
         defaultDate: this._state.dateTo,
+        minDate: this._state.dateFrom,
+        onChange: this.#dateToChangeHandler,
       }
     );
   }
@@ -231,6 +237,19 @@ class PointEditView extends AbstractStatefulView {
   #rollupClickHandler = (event) => {
     event.preventDefault();
     this.#handleRollupClick();
+  };
+
+  #dateFromChangeHandler = ([userDate]) => {
+    this._setState({
+      dateFrom: userDate,
+    });
+    this.#datepickerTo.set('minDate', userDate);
+  };
+
+  #dateToChangeHandler = ([userDate]) => {
+    this._setState({
+      dateTo: userDate,
+    });
   };
 
   static parsePointToState(point) {
