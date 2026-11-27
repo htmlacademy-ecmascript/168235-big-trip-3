@@ -32,7 +32,7 @@ class PointPresenter {
     const prevPointView = this.#pointView;
     const prevPointEditView = this.#pointEditView;
 
-    const {destinations} = this.#pointsModel;
+    const {destinations, offers} = this.#pointsModel;
     const destination = this.#pointsModel.getDestinationById(point.destination);
     const availableOffers = this.#pointsModel.getOffersByType(point.type);
     const selectedOffers = availableOffers.filter((offer) => point.offers.includes(offer.id));
@@ -47,11 +47,10 @@ class PointPresenter {
 
     this.#pointEditView = new PointEditView({
       point,
-      destination,
       destinations,
-      availableOffers,
-      onFormSubmit: this.#handleFormClose,
-      onRollupClick: this.#handleFormClose
+      offers,
+      onFormSubmit: this.#handleFormSubmit,
+      onRollupClick: this.#handleRollupClick
     });
 
     if (prevPointView === null || prevPointEditView === null) {
@@ -79,6 +78,7 @@ class PointPresenter {
 
   resetView() {
     if (this.#mode !== Mode.DEFAULT) {
+      this.#pointEditView.reset(this.#point);
       this.#replaceFormToPoint();
     }
   }
@@ -99,6 +99,7 @@ class PointPresenter {
   #escKeyDownHandler = (event) => {
     if (event.key === 'Escape') {
       event.preventDefault();
+      this.#pointEditView.reset(this.#point);
       this.#replaceFormToPoint();
     }
   };
@@ -107,7 +108,12 @@ class PointPresenter {
     this.#replacePointToForm();
   };
 
-  #handleFormClose = () => {
+  #handleFormSubmit = () => {
+    this.#replaceFormToPoint();
+  };
+
+  #handleRollupClick = () => {
+    this.#pointEditView.reset(this.#point);
     this.#replaceFormToPoint();
   };
 

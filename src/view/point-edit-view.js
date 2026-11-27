@@ -1,4 +1,4 @@
-import AbstractView from '../framework/view/abstract-view.js';
+import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import {humanizePointDateTime, capitalize} from '../utils.js';
 import {PointType, BLANK_POINT, BLANK_DESTINATION, ROLLUP_BUTTON_CLASS} from '../const.js';
 
@@ -26,10 +26,11 @@ function createTypeTemplate(type, point, formId) {
 
 function createPointEditTemplate({
   point,
-  destination,
-  availableOffers,
-  destinations
+  destinations,
+  offers
 }) {
+  const destination = destinations.find((item) => item.id === point.destination) ?? BLANK_DESTINATION;
+  const availableOffers = offers.find((item) => item.type === point.type)?.offers ?? [];
   const isNewPoint = point.id === null;
   const formId = isNewPoint ? 'new' : point.id;
   const offersTemplate = availableOffers.map((offer) => createOfferEditTemplate(offer, point, formId)).join('');
@@ -115,44 +116,71 @@ function createPointEditTemplate({
             </li>`;
 }
 
-class PointEditView extends AbstractView {
-  #point = null;
-  #destination = null;
+class PointEditView extends AbstractStatefulView {
   #destinations = [];
-  #availableOffers = [];
+  #offers = [];
   #handleFormSubmit = null;
   #handleRollupClick = null;
 
   constructor({
     point = BLANK_POINT,
-    destination = BLANK_DESTINATION,
-    availableOffers = [],
     destinations = [],
+    offers = [],
     onFormSubmit,
     onRollupClick
   }) {
     super();
-    this.#point = point;
-    this.#destination = destination;
-    this.#availableOffers = availableOffers;
+    this._setState(PointEditView.parsePointToState(point));
     this.#destinations = destinations;
+    this.#offers = offers;
     this.#handleFormSubmit = onFormSubmit;
     this.#handleRollupClick = onRollupClick;
+    this._restoreHandlers();
+  }
 
+  get template() {
+    return createPointEditTemplate({
+      point: this._state,
+      destinations: this.#destinations,
+      offers: this.#offers
+    });
+  }
+
+  reset(point) {
+    this.updateElement(
+      PointEditView.parsePointToState(point)
+    );
+  }
+
+  _restoreHandlers() {
+    this.element.querySelector('.event__type-group')
+      .addEventListener('change', this.#typeChangeHandler);
+    this.element.querySelector('.event__input--destination')
+      .addEventListener('change', this.#destinationChangeHandler);
     this.element.querySelector('form')
       .addEventListener('submit', this.#formSubmitHandler);
     this.element.querySelector(`.${ROLLUP_BUTTON_CLASS}`)
       .addEventListener('click', this.#rollupClickHandler);
   }
 
-  get template() {
-    return createPointEditTemplate({
-      point: this.#point,
-      destination: this.#destination,
-      availableOffers: this.#availableOffers,
-      destinations: this.#destinations
+  #typeChangeHandler = (event) => {
+    this.updateElement({
+      type: event.target.value,
+      offers: []
     });
-  }
+  };
+
+  #destinationChangeHandler = (event) => {
+    const selectedDestination = this.#destinations.find((item) => item.name === event.target.value);
+
+    if (!selectedDestination) {
+      return;
+    }
+
+    this.updateElement({
+      destination: selectedDestination.id
+    });
+  };
 
   #formSubmitHandler = (event) => {
     event.preventDefault();
@@ -163,6 +191,10 @@ class PointEditView extends AbstractView {
     event.preventDefault();
     this.#handleRollupClick();
   };
+
+  static parsePointToState(point) {
+    return {...point};
+  }
 }
 
 export default PointEditView;
